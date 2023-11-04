@@ -34,7 +34,22 @@ dma-channel@后面的地址需要根据pl.dtsi修改
 
 pl.dtsi和pcw.dtsi在一个目录里
 
-#### 2.1 编译驱动
+[USB audio on PYNQ-Z1 - Other - Digilent Forum --- PYNQ-Z1上的USB音频 - 其他 - Digilent论坛](https://forum.digilent.com/topic/20455-usb-audio-on-pynq-z1/)
+
+[Xilinx ALSA ASoC driver - Xilinx Wiki - Confluence --- Xilinx ALSA ASoC驱动程序 - Xilinx Wiki - Confluence (atlassian.net)](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841700/Xilinx+ALSA+ASoC+driver)
+
+[Solved: USB Audio errors on i.MX6 Quad - NXP Community](https://community.nxp.com/t5/i-MX-Processors/USB-Audio-errors-on-i-MX6-Quad/m-p/283883)
+
+Improved T…T…
+
+添加USB Audio驱动，以识别USB上挂载的麦克风设备
+
+注意：`arecord -l`执行前需要加`sudo`!
+
+`sudo arecord -D plughw:0,0 -d 10 -f FLOAT_LE -r 16000 -c 1 -t wav test.wav`
+Recording WAVE 'test.wav' : Float 32 bit Little Endian, Rate 16000 Hz, Mono
+
+#### 2.1 编译AXIDMA驱动
 
 [Enable Linux 5.4 support by andrewvoznytsa · Pull Request #139 · bperez77/xilinx_axidma (github.com)](https://github.com/bperez77/xilinx_axidma/pull/139)
 
