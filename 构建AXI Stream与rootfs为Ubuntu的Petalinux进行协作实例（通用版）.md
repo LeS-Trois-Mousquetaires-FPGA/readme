@@ -34,6 +34,8 @@ dma-channel@后面的地址需要根据pl.dtsi修改
 
 pl.dtsi和pcw.dtsi在一个目录里
 
+#### 2.0.1 麦克风音频相关
+
 [USB audio on PYNQ-Z1 - Other - Digilent Forum --- PYNQ-Z1上的USB音频 - 其他 - Digilent论坛](https://forum.digilent.com/topic/20455-usb-audio-on-pynq-z1/)
 
 [Xilinx ALSA ASoC driver - Xilinx Wiki - Confluence --- Xilinx ALSA ASoC驱动程序 - Xilinx Wiki - Confluence (atlassian.net)](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841700/Xilinx+ALSA+ASoC+driver)
@@ -48,6 +50,22 @@ Improved T…T…
 
 `sudo arecord -D plughw:0,0 -d 10 -f FLOAT_LE -r 16000 -c 1 -t wav test.wav`
 Recording WAVE 'test.wav' : Float 32 bit Little Endian, Rate 16000 Hz, Mono
+
+#### 2.0.2 bram配置
+
+我们采用将bram映射到`/dev/mem`的形式实现ps端对bram的访问。
+
+参考文档：
+
+[Accessing BRAM In Linux - Xilinx Wiki - Confluence (atlassian.net)](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842412/Accessing+BRAM+In+Linux#AccessingBRAMInLinux-3AccessingBRAMUsing%2Fdev%2Fmem)
+
+需要注意的是上部分文档中，无需修改linux设备树，vivado会自动帮我们添加。
+
+在ubuntu系统中，devmem指令不可用，需要使用devmem2
+
+`sudo apt-get install devmem2`
+
+vivado和vitis HLS方面的设计参考[(4) VIVADO HLS Training - BRAM interface #06 - YouTube](https://www.youtube.com/watch?app=desktop&v=BUVbKonhc2w)
 
 #### 2.1 编译AXIDMA驱动
 
@@ -139,3 +157,15 @@ sudo chgrp gpio -HR /sys/class/gpio/gpio960 && sudo chmod -R 775 /sys/class/gpio
 使用`dmesg | grep dma`查看驱动是否加载成功，是否识别到ip核中的通道
 
 正确加载驱动后再编写程序测试ip核功能是否正常
+
+### ZYNQ7000迁移到ZYNQ MPSOC的注意事项
+
+1.petalinux构建的时候需要把所有和zynq有关的字样换成zynqmp，如
+
+`petalinux-package --boot --fsbl ./images/linux/zynqmp_fsbl.elf --u-boot --fpga --kernel --force`
+
+`petalinux-create --type project --template zynqmp --name FZ3`
+
+2.petalinux最后打包BOOT.BIN时，可能会遇到flash存储重叠的问题，解决方案见
+
+[Microzed z7020 with Petalinux 2021.2 - element14 Community](https://community.element14.com/products/devtools/avnetboardscommunity/avnetboard-forums/f/microzed-hardware-design/50890/microzed-z7020-with-petalinux-2021-2)
